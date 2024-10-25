@@ -446,7 +446,7 @@ def _run() -> None:
     from vllm.plugins import load_general_plugins
     load_general_plugins()
 
-    fn = pickle.loads(sys.stdin.buffer.read())
+    fn, = pickle.loads(sys.stdin.buffer.read())
 
     _ = fn()
 
