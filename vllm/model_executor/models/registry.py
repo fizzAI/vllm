@@ -423,7 +423,7 @@ _T = TypeVar("_T")
 def _run_in_subprocess(fn: Callable[[], _T]) -> _T:
     with tempfile.NamedTemporaryFile() as output_file:
         # `cloudpickle` allows pickling lambda functions directly
-        input_bytes = cloudpickle.dumps((fn, output_file))
+        input_bytes = cloudpickle.dumps((fn, output_file.name))
 
         # cannot use `sys.executable __file__` here because the script
         # contains relative imports
@@ -452,7 +452,8 @@ def _run() -> None:
 
     result = fn()
 
-    output_file.write(pickle.dumps(result))
+    with open(output_file.name, "wb") as f:
+        f.write(pickle.dumps(result))
 
 
 if __name__ == "__main__":
