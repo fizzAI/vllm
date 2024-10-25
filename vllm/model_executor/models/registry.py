@@ -452,7 +452,7 @@ def _run() -> None:
 
     result = fn()
 
-    with open(output_file.name, "wb") as f:
+    with open(output_file, "wb") as f:
         f.write(pickle.dumps(result))
 
 
