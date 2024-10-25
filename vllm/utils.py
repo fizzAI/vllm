@@ -543,12 +543,13 @@ def get_distributed_init_method(ip: str, port: int) -> str:
 
 
 def get_open_zmq_ipc_path() -> str:
-    base_rpc_path = envs.VLLM_RPC_BASE_PATH
-    return f"ipc://{base_rpc_path}/{uuid4()}"
+    #base_rpc_path = envs.VLLM_RPC_BASE_PATH
+    #return f"ipc://{base_rpc_path}/{uuid4()}"
+    # NOTE: windows does not support ipc://, so we'll use tcp:// instead
+    return f"tcp://127.0.0.1:{get_open_port(1024)}"
 
 
-def get_open_port() -> int:
-    port = envs.VLLM_PORT
+def get_open_port(port: int | None = envs.VLLM_PORT) -> int:
     if port is not None:
         while True:
             try:
