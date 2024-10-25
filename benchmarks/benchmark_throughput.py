@@ -7,7 +7,6 @@ import time
 from typing import List, Optional, Tuple
 
 import torch
-import uvloop
 from tqdm import tqdm
 from transformers import (AutoModelForCausalLM, AutoTokenizer,
                           PreTrainedTokenizerBase)
@@ -16,8 +15,12 @@ from vllm.engine.arg_utils import AsyncEngineArgs, EngineArgs
 from vllm.entrypoints.openai.api_server import (
     build_async_engine_client_from_engine_args)
 from vllm.sampling_params import BeamSearchParams
-from vllm.utils import FlexibleArgumentParser, merge_async_iterators
+from vllm.utils import FlexibleArgumentParser, merge_async_iterators, is_on_windows
 
+if is_on_windows():
+    import winloop as uvloop
+else:
+    import uvloop
 
 def sample_requests(
     dataset_path: str,

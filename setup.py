@@ -36,10 +36,13 @@ VLLM_TARGET_DEVICE = envs.VLLM_TARGET_DEVICE
 
 if not sys.platform.startswith("linux"):
     logger.warning(
-        "vLLM only supports Linux platform (including WSL). "
-        "Building on %s, "
-        "so vLLM may not be able to run correctly", sys.platform)
-    VLLM_TARGET_DEVICE = "empty"
+        "vLLM only officially supports Linux platform (including WSL). "
+        "Building on %s, so vLLM may not be able to run correctly",
+        sys.platform)
+    if sys.platform in "win32":
+        logger.warning("Running on Windows. This is not officially supported, but vLLM may still work.")
+    else:
+        VLLM_TARGET_DEVICE = "empty"
 
 MAIN_CUDA_VERSION = "12.1"
 
@@ -257,6 +260,8 @@ class cmake_build_ext(build_ext):
 def _no_device() -> bool:
     return VLLM_TARGET_DEVICE == "empty"
 
+def _is_windows() -> bool:
+    return VLLM_TARGET_DEVICE == "windows"
 
 def _is_cuda() -> bool:
     has_cuda = torch.version.cuda is not None
@@ -425,7 +430,7 @@ def get_requirements() -> List[str]:
                 resolved_requirements.append(line)
         return resolved_requirements
 
-    if _no_device():
+    if _no_device() or _is_windows():
         requirements = _read_requirements("requirements-cuda.txt")
     elif _is_cuda():
         requirements = _read_requirements("requirements-cuda.txt")
@@ -455,6 +460,10 @@ def get_requirements() -> List[str]:
         raise ValueError(
             "Unsupported platform, please use CUDA, ROCm, Neuron, "
             "OpenVINO, or CPU.")
+    
+    if _is_windows():
+        requirements.append("winloop") # FIXME: remove this once we have a better way to handle Windows
+
     return requirements
 
 

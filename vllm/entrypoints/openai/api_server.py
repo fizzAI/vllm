@@ -13,7 +13,6 @@ from functools import partial
 from http import HTTPStatus
 from typing import AsyncIterator, Set
 
-import uvloop
 from fastapi import APIRouter, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
@@ -57,7 +56,7 @@ from vllm.entrypoints.openai.serving_tokenization import (
 from vllm.entrypoints.openai.tool_parsers import ToolParserManager
 from vllm.logger import init_logger
 from vllm.usage.usage_lib import UsageContext
-from vllm.utils import FlexibleArgumentParser, get_open_zmq_ipc_path
+from vllm.utils import FlexibleArgumentParser, get_open_zmq_ipc_path, is_on_windows
 from vllm.version import __version__ as VLLM_VERSION
 
 TIMEOUT_KEEP_ALIVE = 5  # seconds
@@ -69,6 +68,10 @@ logger = init_logger('vllm.entrypoints.openai.api_server')
 
 _running_tasks: Set[asyncio.Task] = set()
 
+if is_on_windows():
+    import winloop as uvloop
+else:
+    import uvloop
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

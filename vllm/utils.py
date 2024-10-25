@@ -1443,6 +1443,8 @@ def supports_dynamo() -> bool:
 def supports_custom_op() -> bool:
     return hasattr(torch.library, "custom_op")
 
+def is_on_windows() -> bool:
+    return os.name == "nt"
 
 class AtomicCounter:
     """An atomic, thread-safe counter"""
