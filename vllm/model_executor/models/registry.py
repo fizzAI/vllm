@@ -448,7 +448,7 @@ def _run() -> None:
 
     fn = pickle.loads(sys.stdin.buffer.read())
 
-    _ = fn[0]()
+    _ = fn()
 
 
 if __name__ == "__main__":
