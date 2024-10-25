@@ -423,7 +423,7 @@ _T = TypeVar("_T")
 def _run_in_subprocess(fn: Callable[[], _T]) -> _T:
     with tempfile.NamedTemporaryFile() as _:
         # `cloudpickle` allows pickling lambda functions directly
-        input_bytes = cloudpickle.dumps((fn))
+        input_bytes = cloudpickle.dumps(fn)
 
         # cannot use `sys.executable __file__` here because the script
         # contains relative imports
@@ -446,7 +446,7 @@ def _run() -> None:
     from vllm.plugins import load_general_plugins
     load_general_plugins()
 
-    fn, = pickle.loads(sys.stdin.buffer.read())
+    fn = pickle.loads(sys.stdin.buffer.read())
 
     _ = fn()
 
