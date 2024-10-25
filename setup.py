@@ -41,6 +41,8 @@ if not sys.platform.startswith("linux"):
         sys.platform)
     if sys.platform in "win32":
         logger.warning("Running on Windows. This is not officially supported, but vLLM may still work.")
+        logger.warning("Assuming CUDA backend will be used, others are not supported for Windows.")
+        VLLM_TARGET_DEVICE = "cuda"
     else:
         VLLM_TARGET_DEVICE = "empty"
 
